@@ -1,0 +1,24 @@
+FROM node:14 as builder
+#this is the build environment where we will build our application
+
+WORKDIR /app
+#this sets the context of where commands will be ran in and is documented here
+
+COPY package*.json ./ 
+#this allows us to take advantage of cached Docker layers and not re-install our dependencies every time we make a change to our application code.
+
+RUN npm install
+#this will run npm install either from a local cache or from the registry
+
+COPY . .
+#this copies our application files into the image
+
+EXPOSE 3000
+#this exposes port 3000 on our container
+
+CMD [ "node", "app.js" ]
+#this runs our application with node app.js
+#could also use entrypoint and that would look like this:
+#ENTRYPOINT ["node", "app.js"]
+#the difference between CMD and ENTRYPOINT is that CMD can be overwritten when running the container with docker run <image> <new command>
+#ENTRYPOINT cannot be overwritten and will always run the command specified
